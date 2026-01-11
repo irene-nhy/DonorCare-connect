@@ -1,13 +1,28 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// Safe access to environment variables to prevent white-screen crashes on platforms like Netlify
+const getApiKey = (): string => {
+  try {
+    return typeof process !== 'undefined' && process.env ? process.env.API_KEY || '' : '';
+  } catch (e) {
+    return '';
+  }
+};
+
+const ai = new GoogleGenAI({ apiKey: getApiKey() });
 
 export const refineMessage = async (
   category: string, 
   userText: string, 
   ngoName: string
 ): Promise<string> => {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    console.warn("Gemini API Key is missing. Skipping refinement.");
+    return userText;
+  }
+
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -31,6 +46,9 @@ export const refineMessage = async (
 };
 
 export const suggestCategory = async (userDescription: string, categories: string[]): Promise<string> => {
+  const apiKey = getApiKey();
+  if (!apiKey) return '';
+
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
