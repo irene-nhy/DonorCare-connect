@@ -1,0 +1,7 @@
+{
+  "name": "DonorCare Connect",
+  "description": "A warm, minimalist donor support application that streamlines NGO inquiries through personalized WhatsApp pre-filled messages.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
